@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Header from './components/Header';
-import ResultCard from './components/ResultCard';
+import AppHeader from './components/AppHeader.tsx';
+import SongResultCard from './components/SongResultCard.tsx';
 import { SongData, User, Inspiration, SongVariant } from './types';
 import { generateInstantSong } from './services/geminiService';
 import { 
@@ -490,7 +490,7 @@ ${variant.sunoPrompt}
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
-        <Header 
+        <AppHeader 
           user={user} 
           onLogin={() => {}} 
           onUpgrade={() => setShowPricing(true)} 
@@ -575,7 +575,7 @@ ${variant.sunoPrompt}
                <div className="flex flex-col gap-12 max-w-5xl mx-auto">
                   {generatedSongs.map(song => (
                     <div key={song.id} className="w-full">
-                      <ResultCard 
+                      <SongResultCard 
                         song={song} 
                         onRefine={(variant) => handleRefine(song, variant)}
                       />
