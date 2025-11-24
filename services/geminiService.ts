@@ -51,14 +51,23 @@ const RESPONSE_SCHEMA: Schema = {
 };
 
 export const generateInstantSong = async (userHint?: string): Promise<SongData> => {
-  const apiKey = process.env.API_KEY;
+  // 1. Try to retrieve API Key from Client Environment (Vite style)
+  // Note: In Vercel Production, this is usually undefined, which is GOOD. 
+  // We want to force the use of the server proxy /api/generate.
+  let apiKey: string | undefined;
+  try {
+    // @ts-ignore
+    apiKey = import.meta.env.VITE_API_KEY;
+  } catch (e) {
+    // ignore
+  }
 
   try {
     let data;
 
     if (apiKey) {
-      // --- TEST MODE: Direct Client SDK Call ---
-      console.log("⚠️ Dev Mode Detected: Using Direct API Call.");
+      // --- LOCAL DEV MODE: Direct Client SDK Call ---
+      console.log("⚠️ Client Mode: Using Direct API Key.");
       
       const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
@@ -71,12 +80,11 @@ export const generateInstantSong = async (userHint?: string): Promise<SongData> 
         },
       });
 
-      // With Schema, .text is guaranteed to be valid JSON
       data = JSON.parse(response.text || "{}");
 
     } else {
-      // --- PRODUCTION MODE: Secure Server Proxy ---
-      console.log("🔒 Prod Mode: Using Server Proxy.");
+      // --- PRODUCTION MODE: Server Proxy ---
+      console.log("🔒 Server Mode: Calling /api/generate...");
       
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -86,8 +94,17 @@ export const generateInstantSong = async (userHint?: string): Promise<SongData> 
         body: JSON.stringify({ prompt: userHint }),
       });
 
+      // CRITICAL: Improved Error Parsing
       if (!response.ok) {
-        throw new Error(`Server error: ${response.statusText}`);
+        let errorDetail = response.statusText;
+        try {
+            const errJson = await response.json();
+            if (errJson.error) errorDetail = errJson.error;
+            if (errJson.details) errorDetail += ` (${errJson.details})`;
+        } catch (e) {
+            // raw text fallback
+        }
+        throw new Error(`Server Error (${response.status}): ${errorDetail}`);
       }
 
       data = await response.json();
@@ -120,14 +137,10 @@ export const generateInstantSong = async (userHint?: string): Promise<SongData> 
 
   } catch (error) {
     console.error("Generate Error:", error);
-    throw error;
+    throw error; // Rethrow to allow UI to display the message
   }
 };
 
-/**
- * Pro Mode Chat:
- * Temporarily disabled.
- */
 export const createProChat = (): any => {
   console.warn("Pro Chat is currently disabled in Guest Mode.");
   return null;

@@ -104,8 +104,11 @@ const App: React.FC = () => {
     try {
       const song = await generateInstantSong(instantInput);
       setGeneratedSongs(prev => [song, ...prev]);
-    } catch (e) {
-      alert("Failed to generate song. Please check connection.");
+    } catch (e: any) {
+      console.error("App Generate Error:", e);
+      // Enhanced Error Display
+      alert(`生成遇到问题: ${e.message || "网络或服务异常"}`);
+      
       // Refund on failure
       setUser(prev => {
          const refunded = prev.credits + COST_PER_GENERATION;
