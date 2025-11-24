@@ -56,8 +56,7 @@ export default async function handler(req: any, res: any) {
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
       console.error("Server API_KEY is missing");
-      // Explicit error message for Vercel logs/client
-      return res.status(500).json({ error: 'CRITICAL: 请在 Vercel Settings -> Environment Variables 中添加 API_KEY' });
+      return res.status(500).json({ error: 'Server configuration error: API_KEY missing' });
     }
 
     // 3. Parse Request
@@ -67,8 +66,9 @@ export default async function handler(req: any, res: any) {
     const ai = new GoogleGenAI({ apiKey });
 
     // 5. Call the Model with Strict Config
+    // CHANGED: Switched to 'gemini-2.5-flash' for better free tier quota limits
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-2.5-flash',
       contents: userHint || 'A random hit song',
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
@@ -86,8 +86,9 @@ export default async function handler(req: any, res: any) {
 
   } catch (error: any) {
     console.error("API Route Error:", error);
+    // Return detailed error to help debugging (especially 429s)
     return res.status(500).json({ 
-      error: 'Gemini API Call Failed',
+      error: 'Gemini API Error',
       details: error.message 
     });
   }

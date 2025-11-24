@@ -52,8 +52,6 @@ const RESPONSE_SCHEMA: Schema = {
 
 export const generateInstantSong = async (userHint?: string): Promise<SongData> => {
   // 1. Try to retrieve API Key from Client Environment (Vite style)
-  // Note: In Vercel Production, this is usually undefined, which is GOOD. 
-  // We want to force the use of the server proxy /api/generate.
   let apiKey: string | undefined;
   try {
     // @ts-ignore
@@ -70,8 +68,9 @@ export const generateInstantSong = async (userHint?: string): Promise<SongData> 
       console.log("⚠️ Client Mode: Using Direct API Key.");
       
       const ai = new GoogleGenAI({ apiKey });
+      // CHANGED: Switched to 'gemini-2.5-flash' for better free tier quota limits
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
+        model: 'gemini-2.5-flash',
         contents: `User Input: "${userHint || 'A random hit song'}"`,
         config: {
           systemInstruction: SYSTEM_INSTRUCTION,
@@ -94,7 +93,6 @@ export const generateInstantSong = async (userHint?: string): Promise<SongData> 
         body: JSON.stringify({ prompt: userHint }),
       });
 
-      // CRITICAL: Improved Error Parsing
       if (!response.ok) {
         let errorDetail = response.statusText;
         try {
@@ -137,7 +135,7 @@ export const generateInstantSong = async (userHint?: string): Promise<SongData> 
 
   } catch (error) {
     console.error("Generate Error:", error);
-    throw error; // Rethrow to allow UI to display the message
+    throw error;
   }
 };
 
