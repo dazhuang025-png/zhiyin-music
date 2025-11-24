@@ -56,7 +56,8 @@ export default async function handler(req: any, res: any) {
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
       console.error("Server API_KEY is missing");
-      return res.status(500).json({ error: 'Server configuration error' });
+      // Explicit error message for Vercel logs/client
+      return res.status(500).json({ error: 'CRITICAL: 请在 Vercel Settings -> Environment Variables 中添加 API_KEY' });
     }
 
     // 3. Parse Request
@@ -86,7 +87,7 @@ export default async function handler(req: any, res: any) {
   } catch (error: any) {
     console.error("API Route Error:", error);
     return res.status(500).json({ 
-      error: 'Failed to generate content',
+      error: 'Gemini API Call Failed',
       details: error.message 
     });
   }
