@@ -9,7 +9,9 @@ import {
   COST_PER_GENERATION, 
   WECHAT_ID, 
   PRICING_CONFIG, 
-  CONTACT_CONFIG 
+  CONTACT_CONFIG,
+  PAYMENT_QR_CODE, // 新增
+  CONTACT_QR_CODE  // 新增
 } from './config';
 import { 
   Loader2, 
@@ -189,11 +191,8 @@ ${variant.sunoPrompt}
           <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">{CONTACT_CONFIG.title}</h3>
           <p className="text-gray-500 mb-8 text-sm font-serif italic">{CONTACT_CONFIG.subtitle}</p>
 
-          <div className="w-48 h-48 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center mb-6 relative overflow-hidden">
-             <div className="text-gray-400 text-xs flex flex-col items-center gap-2">
-                <span className="block w-24 h-24 bg-gray-200 rounded animate-pulse"></span>
-                <span>扫码添加主理人</span>
-             </div>
+          <div className="w-48 h-48 bg-white border border-gray-100 rounded-xl flex items-center justify-center mb-6 relative overflow-hidden shadow-inner p-2">
+             <img src={CONTACT_QR_CODE} alt="Contact QR" className="w-full h-full object-contain" />
           </div>
 
           <div className="text-left w-full space-y-3 mb-8 font-serif text-sm text-gray-600">
@@ -229,11 +228,9 @@ ${variant.sunoPrompt}
           <h3 className="text-2xl font-serif font-bold text-gray-900 mb-1">扫码解锁灵感</h3>
           <p className="text-gray-500 mb-8 font-serif">开通: <span className="text-gray-900">{selectedPlan.name}</span></p>
 
-          <div className="w-56 h-56 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center mb-8 relative">
-             <div className="text-gray-400 text-xs flex flex-col items-center gap-2">
-                <span className="block w-32 h-32 bg-gray-200 rounded animate-pulse"></span>
-                <span>微信/支付宝扫码</span>
-             </div>
+          <div className="w-56 h-56 bg-white border border-gray-100 rounded-xl flex items-center justify-center mb-8 relative p-2 shadow-inner">
+             {/* 替换了原来的灰色占位符 */}
+             <img src={PAYMENT_QR_CODE} alt="Payment QR" className="w-full h-full object-contain" />
           </div>
 
           <div className="w-full mb-8 text-center">
@@ -243,8 +240,8 @@ ${variant.sunoPrompt}
 
           <button 
             onClick={() => {
-                alert("请求已发送！客服将尽快为您核实开通。");
-                setShowPayment(false);
+                setShowPayment(false); // 关闭支付弹窗
+                setShowContact(true);  // 打开联系客服弹窗
             }}
             className="w-full py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-violet-200"
           >
