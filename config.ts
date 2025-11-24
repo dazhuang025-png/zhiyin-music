@@ -1,12 +1,16 @@
+
+
 // --- 基础配置 ---
 export const WECHAT_ID = "Polan_Music_AI"; // 在此处修改你的微信号
 export const COST_PER_GENERATION = 1; // 每次生成消耗 1 次机会
 
-// --- 图片配置 (新增) ---
-// 请将下方的链接替换为你自己的 微信/支付宝 收款码图片链接
-export const PAYMENT_QR_CODE = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Payment_QR_Code_Placeholder";
-// 请将下方的链接替换为你自己的 微信加好友 二维码图片链接
-export const CONTACT_QR_CODE = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Contact_WeChat_Placeholder";
+// --- 图片配置 (修改) ---
+// 1. 请确保你在项目根目录下创建了 'public' 文件夹
+// 2. 将你的收款码重命名为 'payment.jpg' 并放入 public 文件夹
+// 3. 将你的个人微信码重命名为 'contact.jpg' 并放入 public 文件夹
+// 注意：如果你的图片是 png 格式，请将下方的 .jpg 改为 .png
+export const PAYMENT_QR_CODE = "/payment.jpg";
+export const CONTACT_QR_CODE = "/contact.jpg";
 
 // --- 定价策略 ---
 export const PRICING_CONFIG = {
