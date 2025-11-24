@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import AppHeader from './components/AppHeader.tsx';
-import SongResultCard from './components/SongResultCard.tsx';
+import AppHeader from './components/AppHeader';
+import SongResultCard from './components/SongResultCard';
 import { SongData, User, Inspiration, SongVariant } from './types';
 import { generateInstantSong } from './services/geminiService';
 import { 
